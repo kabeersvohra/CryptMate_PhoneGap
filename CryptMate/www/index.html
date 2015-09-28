@@ -33,16 +33,14 @@
     <div class="app">
 
         <div id="selectdiv" style="z-index: -1; width: 200px; height: 100px;">
-            <form id="selectform" style="position: fixed; top: 0; background: white;">
-                <input type="submit" id="generate" value="generate" onclick="generate();">
-                <input type="submit" id="create" value="create" onclick="create();">
-            </form>
+                <button id="generate" value="generate">generate</button>
+                <button id="create" value="create">create</button>
         </div>
 
         <div id="main" style="display: none; z-index: 1; position: fixed; top: 0; width: 200px; height: 100px; background: white;">
             <div id="forms" style="position: fixed; top: 0; background: white;">
                 <form id="generatepassword" style="display: none; background: white;">
-                    <select id="domains"></select>
+                    <select id="storeddomains"></select>
                     <input type="password" id="password">
                     <input type="submit" value="Submit">
                 </form>
@@ -51,6 +49,7 @@
                     <input type="text" id="domain">
                     <input type="password" id="newpassword">
                     <input type="password" id="confirmpassword">
+                    <select id="linkdomains"></select>
                     <input type="submit" value="Submit">
                 </form>
 
@@ -65,7 +64,7 @@
         </div>
     </div>
         <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             app.initialize();
