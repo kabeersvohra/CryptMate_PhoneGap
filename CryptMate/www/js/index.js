@@ -23,8 +23,13 @@ var newpassword = "";
 var subscriptionended = false;
 var params = {};
 var passwordform = $("#password");
+var passwordforms = $("#passwordforms");
+var loginforms = $("#loginforms");
 var newpasswordform = $("#newpassword");
 var confirmpasswordform = $("#confirmpassword");
+var loginusernameform = $("#loginusername");
+var loginpasswordform = $("#loginpassword");
+var logoutbutton = $(".logout");
 var generatedpasswordform = $("#generatedpassword");
 var createnewpassworddiv = $("#createnewpassword");
 var generatepassworddiv = $("#generatepassword");
@@ -38,110 +43,6 @@ var storeddomains = $("#storeddomains");
 var generatebutton = $("#generate");
 var createbutton = $("#create");
 
-var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        $("form").on('submit', function (e) {
-            switch (e.target.id) {
-                case "createnewpassword":
-                    var newpassword = newpasswordform.val();
-                    var confirmpassword = confirmpasswordform.val();
-                    domain = domaininput.val();
-                    var linkeddomain = linkdomains.find("option:selected").text();
-
-                    if (newpassword == confirmpassword) {
-                        params =
-                        {
-                            token: "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx",
-                            password: newpassword,
-                            domain: domain,
-                            newpassword: 1,
-                            linkeddomain: linkeddomain
-                        };
-
-                        $.ajax({
-                            type: "POST",
-                            url: "https://www.cryptmate.com/processing/rest.php",
-                            data: params,
-                            success: function (data, status) {
-                                var returndata = JSON.parse(data);
-                                switch (returndata.returntype) {
-                                    case "error":
-                                        error(returndata.error);
-                                        break;
-                                    case "password":
-                                        clearAll();
-                                        createnewpassworddiv.hide();
-                                        generatepassworddiv.hide();
-                                        showpassworddiv.show();
-                                        generatedpasswordform.val(returndata.hash);
-                                        break;
-                                }
-                            },
-                            error: function () {
-                                error("Internet connection failure, please try again when internet connection is active")
-                            }
-                        });
-                    }
-                    else {
-                        error("Passwords do not match");
-                    }
-                    break;
-                case "generatepassword":
-                    var password = passwordform.val();
-                    domain = storeddomains.find("option:selected").text();
-                    params =
-                    {
-                        token: "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx",
-                        password: password,
-                        domain: domain,
-                        newpassword: 0
-                    };
-
-                    $.ajax({
-                        type: "POST",
-                        url: "https://www.cryptmate.com/processing/rest.php",
-                        data: params,
-                        success: function (data, status) {
-                            var returndata = JSON.parse(data);
-                            switch (returndata.returntype) {
-                                case "error":
-                                    error(returndata.error);
-                                    break;
-                                case "password":
-                                    clearAll();
-                                    createnewpassworddiv.hide();
-                                    generatepassworddiv.hide();
-                                    showpassworddiv.show();
-                                    generatedpasswordform.val(returndata.hash);
-                                    break;
-                            }
-                        },
-                        error: function () {
-                            error("Internet connection failure, please try again when internet connection is active")
-                        }
-                    });
-
-                    break;
-            }
-            return false;
-        });
-    }
-};
 
 document.getElementById("copy").addEventListener("click", function ()
 {
@@ -151,11 +52,29 @@ document.getElementById("copy").addEventListener("click", function ()
     document.execCommand("Copy", false, null);
 });
 
-function populateDropdown (keyeddomains) {
-
-}
-
 window.onload = function() {
+
+    var temptoken = window.localStorage.getItem("token");
+
+    if (temptoken != null && token == null)
+    {
+        token = temptoken;
+    }
+    else if (temptoken == null && token != null)
+    {
+        token = null;
+    }
+
+    if (token == null)
+    {
+        loginforms.show();
+        passwordforms.hide()
+    }
+    else
+    {
+        passwordforms.hide();
+        loginforms.show();
+    }
 
     generatebutton.click( function() {
         maindiv.show();
@@ -167,9 +86,13 @@ window.onload = function() {
         createnewpassworddiv.show();
     });
 
+    logoutbutton.click( function() {
+        window.localStorage.removeItem("token");
+    });
+
     params =
     {
-        token: "HCoUQ9yGbjSP4iyLLAClrXCVbh3Uc2ZHuds9cOFbVlROrdq2BScSDFDCKtkKl0iDbyBbc5cYgRCvUQmlwn2ZStpqMz2Xx0qyxSxxMxjQfKcXqo8NBYAhfQySdnFAkUWFAj3cFcRIKTv16qBvf1CkGY1JbuajeUOE3FExFl6f5o6YFvjIlLSPyJox4mH66lzXQ2klddq6rkTWD3uOCbr1IFnzQUuL7RyKIGWLJaFYkoLLh4pH3GxAaKZOvhnpYLXx",
+        token: token,
         keyeddomains: true
     };
 
@@ -201,12 +124,135 @@ window.onload = function() {
 
 };
 
+$("form").on('submit', function (e) {
+
+    switch (e.target.id) {
+        case "login":
+            var loginusername = loginusernameform.val();
+            var loginpassword = loginpasswordform.val();
+
+            params =
+            {
+                username: loginusername,
+                password: loginpassword
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "https://www.cryptmate.com/processing/rest.php",
+                data: params,
+                success: function (data, status) {
+                    var returndata = JSON.parse(data);
+                    alert(data);
+                    switch (returndata.returntype) {
+                        case "error":
+                            error(returndata.error);
+                            break;
+                        case "token":
+                            window.localStorage.setItem("token", returndata.token);
+                            passwordforms.show();
+                            loginforms.hide();
+                            break;
+                    }
+                },
+                error: function () {
+                    error("Internet connection failure, please try again when internet connection is active")
+                }
+            });
+
+            break;
+        case "createnewpassword":
+            var newpassword = newpasswordform.val();
+            var confirmpassword = confirmpasswordform.val();
+            domain = domaininput.val();
+            var linkeddomain = linkdomains.find("option:selected").text();
+
+            if (newpassword == confirmpassword) {
+                params =
+                {
+                    token: token,
+                    password: newpassword,
+                    domain: domain,
+                    newpassword: 1,
+                    linkeddomain: linkeddomain
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "https://www.cryptmate.com/processing/rest.php",
+                    data: params,
+                    success: function (data, status) {
+                        var returndata = JSON.parse(data);
+                        switch (returndata.returntype) {
+                            case "error":
+                                error(returndata.error);
+                                break;
+                            case "password":
+                                clearAll();
+                                createnewpassworddiv.hide();
+                                generatepassworddiv.hide();
+                                showpassworddiv.show();
+                                generatedpasswordform.val(returndata.hash);
+                                break;
+                        }
+                    },
+                    error: function () {
+                        error("Internet connection failure, please try again when internet connection is active")
+                    }
+                });
+            }
+            else {
+                error("Passwords do not match");
+            }
+            break;
+        case "generatepassword":
+            var password = passwordform.val();
+            domain = storeddomains.find("option:selected").text();
+            params =
+            {
+                token: token,
+                password: password,
+                domain: domain,
+                newpassword: 0
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "https://www.cryptmate.com/processing/rest.php",
+                data: params,
+                success: function (data, status) {
+                    var returndata = JSON.parse(data);
+                    switch (returndata.returntype) {
+                        case "error":
+                            error(returndata.error);
+                            break;
+                        case "password":
+                            clearAll();
+                            createnewpassworddiv.hide();
+                            generatepassworddiv.hide();
+                            showpassworddiv.show();
+                            generatedpasswordform.val(returndata.hash);
+                            break;
+                    }
+                },
+                error: function () {
+                    error("Internet connection failure, please try again when internet connection is active")
+                }
+            });
+
+            break;
+    }
+    return false;
+});
+
 function clearAll()
 {
     passwordform.value = "";
     newpasswordform.value = "";
     confirmpasswordform.value = "";
     generatedpasswordform.value = "";
+    loginusernameform.value = "";
+    loginpasswordform.value = "";
 }
 
 function error(message)
@@ -214,5 +260,8 @@ function error(message)
     clearAll();
     errordiv.html(message);
     formsdiv.hide();
+    loginforms.hide();
+    passwordforms.hide();
+    maindiv.show();
     errordiv.show();
 }

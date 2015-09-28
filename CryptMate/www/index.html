@@ -32,36 +32,51 @@
     <body>
     <div class="app">
 
-        <div id="selectdiv" style="z-index: -1; width: 200px; height: 100px;">
+        <div id="loginforms" style="display: none;">
+            <form id="login">
+                <input type="text" id="loginusername">
+                <input type="password" id="loginpassword">
+                <input type="submit" id="sumbit">
+            </form>
+        </div>
+
+        <div id="passwordforms" style="display: none;">
+            <div id="selectdiv" style="z-index: -1; width: 200px; height: 100px;">
                 <button id="generate" value="generate">generate</button>
                 <button id="create" value="create">create</button>
-        </div>
-
-        <div id="main" style="display: none; z-index: 1; position: fixed; top: 0; width: 200px; height: 100px; background: white;">
-            <div id="forms" style="position: fixed; top: 0; background: white;">
-                <form id="generatepassword" style="display: none; background: white;">
-                    <select id="storeddomains"></select>
-                    <input type="password" id="password">
-                    <input type="submit" value="Submit">
-                </form>
-
-                <form id="createnewpassword" style="display: none; background: white;">
-                    <input type="text" id="domain">
-                    <input type="password" id="newpassword">
-                    <input type="password" id="confirmpassword">
-                    <select id="linkdomains"></select>
-                    <input type="submit" value="Submit">
-                </form>
-
-                <form id="showpassword" style="display: none; background: white;">
-                    <input type="text" readonly id="generatedpassword">
-                    <button id="copy">Copy</button>
-                </form>
+                <button class="logout" value="logout">logout</button>
             </div>
 
-            <div id="error" style="display: none; position: fixed; top: 0; background: white;"></div>
+            <div id="main" style="display: none; z-index: 1; position: fixed; top: 0; width: 200px; height: 100px; background: white;">
+                <div id="forms" style="position: fixed; top: 0; background: white;">
+                    <form id="generatepassword" style="display: none; background: white;">
+                        <select id="storeddomains"></select>
+                        <input type="password" id="password">
+                        <input type="submit" value="Submit">
+                        <button class="logout" value="logout">logout</button>
+                    </form>
 
+                    <form id="createnewpassword" style="display: none; background: white;">
+                        <input type="text" id="domain">
+                        <input type="password" id="newpassword">
+                        <input type="password" id="confirmpassword">
+                        <select id="linkdomains"></select>
+                        <input type="submit" value="Submit">
+                        <button class="logout" value="logout">logout</button>
+                    </form>
+
+                    <form id="showpassword" style="display: none; background: white;">
+                        <input type="text" readonly id="generatedpassword">
+                        <button id="copy">Copy</button>
+                        <button class="logout" value="logout">logout</button>
+                    </form>
+                </div>
+
+                <div id="error" style="display: none; position: fixed; top: 0; background: white;"></div>
+
+            </div>
         </div>
+
     </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>
