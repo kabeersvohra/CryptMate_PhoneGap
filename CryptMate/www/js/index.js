@@ -19,75 +19,112 @@
 
 var token = "";
 var domain = "";
-var newpassword = "";
 var subscriptionended = false;
 var params = {};
 var passwordform = $("#password");
-var passwordforms = $("#passwordforms");
 var loginforms = $("#loginforms");
 var newpasswordform = $("#newpassword");
 var confirmpasswordform = $("#confirmpassword");
 var loginusernameform = $("#loginusername");
 var loginpasswordform = $("#loginpassword");
 var logoutbutton = $(".logout");
+var reloadbutton = $(".reload");
 var generatedpasswordform = $("#generatedpassword");
 var createnewpassworddiv = $("#createnewpassword");
 var generatepassworddiv = $("#generatepassword");
 var showpassworddiv = $("#showpassword");
 var maindiv = $("#main");
+var copybutton = $("#copy");
+var setupdiv = $("#setup");
+var selectdiv = $("#selectdiv");
 var domaininput = $("#domain");
 var errordiv = $("#error");
-var formsdiv = $("#forms");
 var linkdomains = $("#linkdomains");
 var storeddomains = $("#storeddomains");
 var generatebutton = $("#generate");
 var createbutton = $("#create");
 
-
-document.getElementById("copy").addEventListener("click", function ()
-{
-    var copyDiv = generatedpasswordform.val();
-    copyDiv.focus();
-    document.execCommand("SelectAll");
-    document.execCommand("Copy", false, null);
-});
-
 window.onload = function() {
 
-    var temptoken = window.localStorage.getItem("token");
-
-    if (temptoken != null && token == null)
-    {
-        token = temptoken;
-    }
-    else if (temptoken == null && token != null)
-    {
-        token = null;
-    }
+    $("input[type=text]").val("");
+    token = window.localStorage.getItem("token");
 
     if (token == null)
     {
+        errordiv.hide();
+        maindiv.hide();
+        setupdiv.show();
         loginforms.show();
-        passwordforms.hide()
+        selectdiv.hide();
     }
     else
     {
-        passwordforms.hide();
-        loginforms.show();
+        errordiv.hide();
+        maindiv.hide();
+        setupdiv.show();
+        selectdiv.show();
+        loginforms.hide();
     }
 
-    generatebutton.click( function() {
+    generatebutton.click( function()
+    {
+        $("input[type=text]").val("");
+        errordiv.hide();
+        setupdiv.hide();
         maindiv.show();
         generatepassworddiv.show();
+        createnewpassworddiv.hide();
+        showpassworddiv.hide();
     });
 
-    createbutton.click( function() {
+    copybutton.click( function() {
+
+        alert("reached");
+
+        var copytext = generatedpasswordform.val();
+        //module.controller('ClipboardCtrl', function($scope, $cordovaClipboard) {
+        //
+        //    $cordovaClipboard
+        //        .copy(copytext)
+        //        .then(function () {
+        //            // success
+        //            alert("success");
+        //        }, function () {
+        //            // error
+        //            alert("failure");
+        //        });
+        //
+        //});
+        alert(copytext);
+        window.plugins.clipboard.copy(copytext);
+        alert("rereached");
+    });
+
+    createbutton.click( function()
+    {
+        $("input[type=text]").val("");
+        errordiv.hide();
+        setupdiv.hide();
         maindiv.show();
+        generatepassworddiv.hide();
         createnewpassworddiv.show();
+        showpassworddiv.hide();
     });
 
-    logoutbutton.click( function() {
+    logoutbutton.click( function()
+    {
+        $("input[type=text]").val("");
+        errordiv.hide();
+        maindiv.hide();
+        setupdiv.show();
+        loginforms.show();
+        selectdiv.hide();
         window.localStorage.removeItem("token");
+    });
+
+    reloadbutton.click( function()
+    {
+        window.location.reload();
     });
 
     params =
@@ -143,15 +180,21 @@ $("form").on('submit', function (e) {
                 data: params,
                 success: function (data, status) {
                     var returndata = JSON.parse(data);
-                    alert(data);
                     switch (returndata.returntype) {
                         case "error":
                             error(returndata.error);
                             break;
                         case "token":
+                            $("input[type=text]").val("");
                             window.localStorage.setItem("token", returndata.token);
-                            passwordforms.show();
+                            errordiv.hide();
+                            maindiv.hide();
+                            setupdiv.show();
                             loginforms.hide();
+                            selectdiv.show();
+                            break;
+                        case "subscriptionended":
+                            error("Subscription ended, please log onto cryptmate.com and extend your subscription");
                             break;
                     }
                 },
@@ -188,9 +231,12 @@ $("form").on('submit', function (e) {
                                 error(returndata.error);
                                 break;
                             case "password":
-                                clearAll();
-                                createnewpassworddiv.hide();
+                                $("input[type=text]").val("");
+                                errordiv.hide();
+                                setupdiv.hide();
+                                maindiv.show();
                                 generatepassworddiv.hide();
+                                createnewpassworddiv.hide();
                                 showpassworddiv.show();
                                 generatedpasswordform.val(returndata.hash);
                                 break;
@@ -227,9 +273,12 @@ $("form").on('submit', function (e) {
                             error(returndata.error);
                             break;
                         case "password":
-                            clearAll();
-                            createnewpassworddiv.hide();
+                            $("input[type=text]").val("");
+                            errordiv.hide();
+                            setupdiv.hide();
+                            maindiv.show();
                             generatepassworddiv.hide();
+                            createnewpassworddiv.hide();
                             showpassworddiv.show();
                             generatedpasswordform.val(returndata.hash);
                             break;
@@ -245,23 +294,11 @@ $("form").on('submit', function (e) {
     return false;
 });
 
-function clearAll()
-{
-    passwordform.value = "";
-    newpasswordform.value = "";
-    confirmpasswordform.value = "";
-    generatedpasswordform.value = "";
-    loginusernameform.value = "";
-    loginpasswordform.value = "";
-}
-
 function error(message)
 {
-    clearAll();
-    errordiv.html(message);
-    formsdiv.hide();
-    loginforms.hide();
-    passwordforms.hide();
-    maindiv.show();
+    $("input[type=text]").val("");
+    maindiv.hide();
+    setupdiv.hide();
     errordiv.show();
+    errordiv.html(message);
 }
