@@ -82,21 +82,8 @@ window.onload = function() {
         alert("reached");
 
         var copytext = generatedpasswordform.val();
-        //module.controller('ClipboardCtrl', function($scope, $cordovaClipboard) {
-        //
-        //    $cordovaClipboard
-        //        .copy(copytext)
-        //        .then(function () {
-        //            // success
-        //            alert("success");
-        //        }, function () {
-        //            // error
-        //            alert("failure");
-        //        });
-        //
-        //});
         alert(copytext);
-        window.plugins.clipboard.copy(copytext);
+        clipboard.copy(copytext, function() {alert("success")}, function() {alert("failure")});
         alert("rereached");
     });
 
