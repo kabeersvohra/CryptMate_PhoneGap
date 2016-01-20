@@ -23,36 +23,34 @@ window.onload = function() {
 
     token = window.localStorage.getItem("token");
 
-    params =
+    if (token == null)
     {
-        token: token,
-        keyeddomains: true
-    };
-
-    $.ajax({
-        type: "POST",
-        url: "https://www.cryptmate.com/processing/rest.php",
-        data: params,
-        crossDomain: true,
-        cache: false,
-        async: false,
-        success: function (data, status) {
-
-            window.localStorage.setItem("keyeddomains", data);
-
-            if (token == null)
-            {
-                window.location = "login.html";
+        window.location = "login.html";
+    }
+    else
+    {
+        params =
+        {
+            token: token,
+            keyeddomains: true
+        };
+        $.ajax({
+            type: "POST",
+            url: "https://www.cryptmate.com/processing/rest.php",
+            data: params,
+            crossDomain: true,
+            cache: false,
+            async: false,
+            success: function (data, status) {
+                window.localStorage.setItem("keyeddomains", data);
+            },
+            error: function () {
+                window.localStorage.setItem("errormessage", "Internet connection failure, please try again when internet connection is active");
+                window.location = "error.html";
             }
-            else
-            {
-                window.location = "passwordprocessselect.html";
-            }
-        },
-        error: function () {
-            window.localStorage.setItem("errormessage", "Internet connection failure, please try again when internet connection is active");
-            window.location = "error.html";
-        }
-    });
+        });
+        window.location = "passwordprocessselect.html";
+    }
+
 
 };

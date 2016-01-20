@@ -2,18 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="css/credentials.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 </head>
+
 <body>
+    <div class="card-container">
+        <div class="form-container">
+            <img id="profile-img" class="profile-img-card" src="img/logo.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin" id="login">
+                <span id="reauth-email" class="reauth-email"></span>
+                <input type="text" id="loginusername" class="form-control" placeholder="Username" required autofocus>
+                <input type="password" id="loginpassword" class="form-control" placeholder="Password" required>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" id="submit" type="submit">Sign in</button>
+            </form><!-- /form -->
+        </div>
+    </div><!-- /card-container -->
 
-    <form id="login">
-        <input type="text" id="loginusername">
-        <input type="password" id="loginpassword">
-        <input type="submit" id="sumbit">
-    </form>
-
-    <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/login.js"></script>
 
